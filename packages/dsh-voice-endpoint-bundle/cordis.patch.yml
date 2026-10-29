@@ -1,0 +1,6 @@
+# Replace the stock voice input toolbar row with the pause-terminated build.
+- id: ui-voice-input
+  disabled: true
+- insert:
+    - id: ui-voice-endpoint
+      name: dsh-voice-endpoint
