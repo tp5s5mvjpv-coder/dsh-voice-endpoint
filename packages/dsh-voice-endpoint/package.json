@@ -1,6 +1,6 @@
 {
   "name": "dsh-voice-endpoint",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "DSH voice input that ends the take and transcribes it when you pause, instead of waiting for Stop",
   "keywords": [
     "dsh-plugin",
