@@ -1840,6 +1840,12 @@ window.__ModuleLoader__.load({
 		const AUTO_SUBMIT_TRANSCRIPT = true;
 		/** One frame of slack so the shell publishes the inserted text before submission reads it. */
 		const AUTO_SUBMIT_DELAY_MS = 60;
+		/** Re-open the microphone after a submitted transcript so the next sentence needs no click. */
+		const AUTO_CONTINUE = true;
+		/** Gap between submission and the next take, letting the composer clear its draft first. */
+		const AUTO_CONTINUE_DELAY_MS = 600;
+		/** A continued take that hears nothing for this long gives up instead of recording silence. */
+		const AUTO_CONTINUE_IDLE_MS = 9000;
 		/** Render a compact microphone or an expanded capture, transcription, or retry row. */
 		function VoiceInput({ sessionId, inputActions, locked, onActiveChange, createRecording, transcribe, openSettings, useSpeechReadiness, t }) {
 			const readiness = useSpeechReadiness((value) => value), catalog = readiness.catalog;
@@ -1850,7 +1856,7 @@ window.__ModuleLoader__.load({
 			(0, react.useEffect)(() => {
 				if (usable) setSetupOpen(false);
 			}, [usable]);
-			const current = (0, react.useRef)(), generation = (0, react.useRef)(0);
+			const current = (0, react.useRef)(), generation = (0, react.useRef)(0), halt = (0, react.useRef)(false);
 			const expanded = phase !== "idle";
 			(0, react.useLayoutEffect)(() => {
 				onActiveChange(expanded);
@@ -1883,8 +1889,12 @@ window.__ModuleLoader__.load({
 						quietSince = 0;
 						return;
 					}
-					if (spokeMs < ENDPOINT_MIN_SPEECH_MS) return;
 					const now = performance.now();
+					if (active.auto && spokeMs === 0 && now - active.startedAt >= AUTO_CONTINUE_IDLE_MS) {
+						cancel();
+						return;
+					}
+					if (spokeMs < ENDPOINT_MIN_SPEECH_MS) return;
 					if (quietSince === 0) {
 						quietSince = now;
 						return;
@@ -1896,6 +1906,7 @@ window.__ModuleLoader__.load({
 			};
 			const cancel = () => {
 				generation.current++;
+				halt.current = true;
 				const active = current.current;
 				current.current = void 0;
 				if (active) {
@@ -1990,6 +2001,10 @@ window.__ModuleLoader__.load({
 							}
 						}, AUTO_SUBMIT_DELAY_MS);
 					}
+					if (AUTO_CONTINUE) setTimeout(() => {
+						if (halt.current || current.current || generation.current !== run || !usable) return;
+						start(true);
+					}, AUTO_SUBMIT_DELAY_MS + AUTO_CONTINUE_DELAY_MS);
 				} catch (failure) {
 					await disposeRecording(active.capture);
 					if (run === generation.current) feedback(failureText(failure, t));
@@ -1997,8 +2012,9 @@ window.__ModuleLoader__.load({
 					if (run === generation.current) current.current = void 0;
 				}
 			};
-			const start = async () => {
+			const start = async (auto = false) => {
 				if (!catalog || !usable || locked || current.current) return;
+				halt.current = false;
 				const run = ++generation.current;
 				const active = {
 					capture: createRecording(),
@@ -2007,7 +2023,9 @@ window.__ModuleLoader__.load({
 					selection: catalog.selection,
 					maxDurationSeconds: catalog.maxDurationSeconds,
 					maxAudioBytes: catalog.maxAudioBytes,
-					phase: "requesting"
+					phase: "requesting",
+					auto,
+					startedAt: performance.now()
 				};
 				current.current = active;
 				setMessage("");
