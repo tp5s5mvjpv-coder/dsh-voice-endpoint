@@ -2,7 +2,7 @@
 
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的语音输入插件：**停顿即结束本次录音**，不用再点「停止」。
 
-点一次麦克风，说一段，停下。约 1 秒静音后自动结束录音，交给现有的 SenseVoice 识别，文字落进输入框草稿——不会自动发送。
+点一次麦克风，说一段，停下。约 1 秒静音后自动结束录音，交给现有的 SenseVoice 识别，文字落进输入框草稿并自动发送。
 
 > 请安装 [`dsh-voice-endpoint-bundle`](https://www.npmjs.com/package/dsh-voice-endpoint-bundle)，它带有替换原工具栏行的 patch；单独装本包不会生效。
 
@@ -26,11 +26,11 @@ dsh plugin --profile desktop add dsh-voice-endpoint-bundle
 
 | 操作 | 结果 |
 | --- | --- |
-| 说话后停顿约 1 秒 | 自动结束录音、开始识别、文字插入草稿 |
+| 说话后停顿约 1 秒 | 自动结束录音、开始识别，文字插入草稿后**自动发送** |
 | 说话后点「停止」 | 与原版一致：识别并插入 |
 | 取消 / Esc | 丢弃本次录音，行为不变 |
 | 语音短于 200ms | 不自动结束，等手动停止或时长上限 |
-| 识别结果 | 只进草稿，绝不自动发送 |
+| 关闭自动发送 | 设 `AUTO_SUBMIT_TRANSCRIPT = false`，文字留在草稿里等你看 |
 
 ## 调参
 
@@ -41,6 +41,8 @@ const ENDPOINT_RMS = 0.012        // 音量门限，环境吵就调高
 const ENDPOINT_POLL_MS = 60       // 采样间隔
 const ENDPOINT_MIN_SPEECH_MS = 200
 const ENDPOINT_SILENCE_MS = 1000  // 静音多久算说完
+const AUTO_SUBMIT_TRANSCRIPT = true   // false 则只插入不发送
+const AUTO_SUBMIT_DELAY_MS = 60
 ```
 
 改 profile 里的 `node_modules/dsh-voice-endpoint/lib/client.js`，然后重启。
