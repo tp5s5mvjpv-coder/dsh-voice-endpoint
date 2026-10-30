@@ -6,7 +6,7 @@ Click the microphone once, speak, stop talking. After about a second of silence 
 
 ```
 对话输入框：[麦克风] 你说的话……（停顿 1s）
-          → 自动结束录音 → 识别中… → 文字插入草稿 → 自动发送
+          → 自动结束录音 → 识别中… → 文字插入草稿 → 自动发送 →（麦克风自动重开，直接说下一句）
 ```
 
 ## Packages
