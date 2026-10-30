@@ -1836,6 +1836,10 @@ window.__ModuleLoader__.load({
 		const ENDPOINT_MIN_SPEECH_MS = 200;
 		/** Silence held this long after speech ends the take exactly like the stop button. */
 		const ENDPOINT_SILENCE_MS = 1000;
+		/** Submit the transcribed text as soon as it lands in the draft; set false to keep review-then-send. */
+		const AUTO_SUBMIT_TRANSCRIPT = true;
+		/** One frame of slack so the shell publishes the inserted text before submission reads it. */
+		const AUTO_SUBMIT_DELAY_MS = 60;
 		/** Render a compact microphone or an expanded capture, transcription, or retry row. */
 		function VoiceInput({ sessionId, inputActions, locked, onActiveChange, createRecording, transcribe, openSettings, useSpeechReadiness, t }) {
 			const readiness = useSpeechReadiness((value) => value), catalog = readiness.catalog;
@@ -1975,6 +1979,17 @@ window.__ModuleLoader__.load({
 						return;
 					}
 					setPhase("idle");
+					if (AUTO_SUBMIT_TRANSCRIPT) {
+						const send = inputActions.submit;
+						if (typeof send === "function") setTimeout(() => {
+							if (run !== generation.current) return;
+							try {
+								send.call(inputActions);
+							} catch (error) {
+								console.error("Voice input auto-submit failed", error);
+							}
+						}, AUTO_SUBMIT_DELAY_MS);
+					}
 				} catch (failure) {
 					await disposeRecording(active.capture);
 					if (run === generation.current) feedback(failureText(failure, t));
