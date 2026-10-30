@@ -30,6 +30,7 @@ dsh plugin --profile desktop add dsh-voice-endpoint-bundle
 | 说话后点「停止」 | 与原版一致：识别并插入 |
 | 取消 / Esc | 丢弃本次录音，行为不变 |
 | 语音短于 200ms | 不自动结束，等手动停止或时长上限 |
+| 继续说下一句 | 上一条提交后麦克风自动重新打开，直接说下一句即可 |
 | 关闭自动发送 | 设 `AUTO_SUBMIT_TRANSCRIPT = false`，文字留在草稿里等你看 |
 
 ## 调参
@@ -43,6 +44,9 @@ const ENDPOINT_MIN_SPEECH_MS = 200
 const ENDPOINT_SILENCE_MS = 1000  // 静音多久算说完
 const AUTO_SUBMIT_TRANSCRIPT = true   // false 则只插入不发送
 const AUTO_SUBMIT_DELAY_MS = 60
+const AUTO_CONTINUE = true           // 提交后继续听下一条
+const AUTO_CONTINUE_DELAY_MS = 600
+const AUTO_CONTINUE_IDLE_MS = 9000  // 连续模式 9 秒没说话自动退出
 ```
 
 改 profile 里的 `node_modules/dsh-voice-endpoint/lib/client.js`，然后重启。
