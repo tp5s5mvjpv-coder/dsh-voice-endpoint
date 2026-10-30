@@ -2,11 +2,11 @@
 
 Voice input for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) that **ends the take when you pause**, instead of waiting for a Stop click.
 
-Click the microphone once, speak, stop talking. After about a second of silence the take ends, the configured speech provider transcribes it, and the text lands in the composer draft — nothing is sent automatically.
+Click the microphone once, speak, stop talking. After about a second of silence the take ends, the configured speech provider transcribes it, and the text lands in the composer draft and is submitted for you.
 
 ```
 对话输入框：[麦克风] 你说的话……（停顿 1s）
-          → 自动结束录音 → 识别中… → 文字插入草稿 → 你按回车发送
+          → 自动结束录音 → 识别中… → 文字插入草稿 → 自动发送
 ```
 
 ## Packages
