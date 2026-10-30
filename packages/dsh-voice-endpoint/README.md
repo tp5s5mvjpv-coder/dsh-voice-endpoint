@@ -30,6 +30,7 @@ Restart the app (a page reload is not enough for a newly composed plugin row).
 | Speak, then press Stop | Same as stock: transcribe and insert |
 | Cancel / Escape | Discards the capture, unchanged |
 | Speech shorter than 200 ms | No auto-stop; the take waits for Stop or the duration limit |
+| Speak again | After the submitted message the microphone reopens for the next sentence |
 | Auto-send disabled | Set `AUTO_SUBMIT_TRANSCRIPT = false` to keep the transcript in the draft for review |
 
 ## Tuning
@@ -43,6 +44,9 @@ const ENDPOINT_MIN_SPEECH_MS = 200
 const ENDPOINT_SILENCE_MS = 1000  // silence that ends the take
 const AUTO_SUBMIT_TRANSCRIPT = true   // false keeps the transcript in the draft
 const AUTO_SUBMIT_DELAY_MS = 60
+const AUTO_CONTINUE = true           // keep listening after a submitted message
+const AUTO_CONTINUE_DELAY_MS = 600
+const AUTO_CONTINUE_IDLE_MS = 9000  // a continued take with no speech gives up
 ```
 
 Edit `node_modules/dsh-voice-endpoint/lib/client.js` inside the profile and restart.
