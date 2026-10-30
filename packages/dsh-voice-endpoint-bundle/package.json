@@ -1,6 +1,6 @@
 {
   "name": "dsh-voice-endpoint-bundle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Profile bundle that swaps DSH's voice input toolbar for a pause-terminated take",
   "keywords": [
     "dsh-plugin",
@@ -11,7 +11,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "dsh-voice-endpoint": "^0.1.0"
+    "dsh-voice-endpoint": "^0.2.0"
   },
   "files": [
     "cordis.patch.yml",
